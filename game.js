@@ -5,6 +5,8 @@ const ctx = canvas.getContext("2d");
 //Sets up Global Variables for Jump Mechanics
 let jumpTime = 0;
 const jumpDuration = 0.5; // in seconds
+let lastTime = 0;
+let deltaTime = 0;
 
 // Set up the player
 const player = {
@@ -153,10 +155,6 @@ function draw() {
 }
 
 // Game loop
-function loop() {
-	let lastTime = 0;
-let deltaTime = 0;
-
 function loop(timestamp) {
   deltaTime = (timestamp - lastTime) / 1000; // Convert to seconds
   lastTime = timestamp;
