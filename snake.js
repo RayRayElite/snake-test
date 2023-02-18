@@ -186,3 +186,18 @@ function hitObstacle(x, y) {
   }
   return false;
 }
+ // Draw the game objects
+  drawSnake();
+  drawFruits();
+  drawObstacles();
+
+  // Check for collisions
+  checkCollisions();
+
+  // Update the score and currency
+  updateScore();
+  updateCurrency();
+
+  // Call the next frame of the game
+  setTimeout(drawGame, GAME_SPEED);
+}
