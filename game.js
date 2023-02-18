@@ -17,8 +17,8 @@ const player = {
 	jumping: false,
 	jumpCount: 0,
 	direction: "right",
-	velocityY: 0 // add velocityY to player object
-	velocityX: 0, // set initial velocity to 0
+	velocityY: 0, // add velocityY to player object
+	velocityX: 0 // set initial velocity to 0
 };
 
 // Set up the platforms 
