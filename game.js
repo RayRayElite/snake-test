@@ -145,7 +145,9 @@ function draw() {
 	
 	// Draw the player
 	ctx.fillStyle = "red";
+if (player) {
 	ctx.fillRect(player.x, player.y, player.width, player.height);
+}
 	
 	// Draw the platforms
 	ctx.fillStyle = "gray";
