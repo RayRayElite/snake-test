@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 //Sets up Global Variables for Jump Mechanics
 let jumpTime = 0;
-const jumpDuration = 0.5; // in seconds
+const jumpDuration = 0.3; // in seconds
 let lastTime = 0;
 let deltaTime = 0;
 
@@ -85,8 +85,8 @@ function update() {
     if (jumpTime < jumpDuration) {
       // Calculate easing function
       const t = jumpTime / jumpDuration;
-      const jumpHeight = 200;
-      const jumpSpeed = -2 * jumpHeight / jumpDuration;
+      const jumpHeight = 125;
+      const jumpSpeed = -1.25 * jumpHeight / jumpDuration;
       player.velocityY = jumpSpeed * t * (1 - t);
     } else {
       player.jumping = false;
