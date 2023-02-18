@@ -76,11 +76,11 @@ function update() {
   // Apply gravity
   player.velocityY += gravity;
 
-// set the player's vertical velocity to 0 and snap them to the bottom of the canvas if they fall off the bottom.
-if (player.y + player.height > canvas.height) {
-  player.velocityY = 0;
-  player.y = canvas.height - player.height;
-}
+  // set the player's vertical velocity to 0 and snap them to the bottom of the canvas if they fall off the bottom.
+  if (player.y + player.height > canvas.height) {
+    player.velocityY = 0;
+    player.y = canvas.height - player.height;
+  }
 
   // sets horizontal player movement to 0 every update when not being changed by the user.
   player.velocityX = 0;
@@ -98,8 +98,9 @@ if (player.y + player.height > canvas.height) {
       player.jumping = false;
       jumpTime = 0;
     }
+  } else if (player.velocityY !== 0) {
+    player.y += player.velocityY * deltaTime;
   }
-  player.y += player.velocityY;
 
   // Check for collisions with platforms
   let canJump = false;
@@ -121,11 +122,12 @@ if (player.y + player.height > canvas.height) {
 
   // Apply input
   if (player.direction === "left") {
-    player.x -= player.speed;
+    player.velocityX = -player.speed;
   }
   if (player.direction === "right") {
-    player.x += player.speed;
+    player.velocityX = player.speed;
   }
+  player.x += player.velocityX * deltaTime;
 
   // Wrap player around screen
   if (player.x < 0) {
@@ -144,6 +146,7 @@ if (player.y + player.height > canvas.height) {
     player.jumpCount -= 10;
   }
 }
+
 // Draw the game
 function draw() {
 	// Clear the canvas
