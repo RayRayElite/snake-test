@@ -146,4 +146,4 @@ function moveSnake() {
   // Start the game
   startGame();
 
-})();
+)();
