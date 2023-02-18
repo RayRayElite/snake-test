@@ -164,7 +164,5 @@ function loop(timestamp) {
   requestAnimationFrame(loop);
 }
 
-}
-
 // Start the game loop
 requestAnimationFrame(loop);
