@@ -1,66 +1,32 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Idle Game</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f5f5f5;
-    }
+  <head>
+    <meta charset="UTF-8">
+    <title>Cell Phone Tycoon</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Cell Phone Tycoon</h1>
+      <p id="money">Money: $0</p>
+      <div id="components">
+        <h2>Components</h2>
+        <p>Click the buttons to buy components</p>
+        <div id="buy-buttons">
+          <button id="buy-battery" class="buy-btn">Buy Battery ($10)</button>
+          <button id="buy-screen" class="buy-btn">Buy Screen ($50)</button>
+          <button id="buy-ram" class="buy-btn">Buy RAM ($100)</button>
+          <button id="buy-processor" class="buy-btn">Buy Processor ($200)</button>
+          <button id="buy-storage" class="buy-btn">Buy Storage ($500)</button>
+        </div>
+      </div>
+      <div id="factory">
+        <h2>Factory</h2>
+        <p>Click the button to assemble a phone</p>
+        <button id="assemble-phone" class="assemble-btn">Assemble Phone ($1000)</button>
+      </div>
+    </div>
 
-    #game-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-      text-transform: uppercase;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    #click-button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-    }
-
-    #upgrade-button {
-      background-color: #2196F3;
-      color: white;
-      border: none;
-    }
-
-    #prestige-button {
-      background-color: #f44336;
-      color: white;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-  <div id="game-container">
-    <h1>Idle Game</h1>
-    <p>Level: <span id="level">1</span></p>
-    <p>Score: <span id="score">0</span></p>
-    <p>Upgrades Purchased: <span id="upgrades">0</span></p>
-    <p>Prestige Level: <span id="prestige-level">0</span></p>
-    <button id="clickButton" class="button">Click Me!</button>
-    <button id="buyUpgradeButton" class="button">Upgrade (Cost: 10)</button>
-    <button id="prestigeButton" class="button">Prestige (Cost: 100)</button>
-    <p>Idle Rate: <span id="idle-rate">0</span> per second</p>
-    <button id="buy-idle" class="button">Buy Idle (Cost: 10)</button>
-  </div>
-
-  <script src="game.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
