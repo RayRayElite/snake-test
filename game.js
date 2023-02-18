@@ -38,7 +38,7 @@ const platforms = [
 ];
 
 // Set up gravity
-const gravity = 1;
+const gravity = 2;
 
 // Handle user input
 document.addEventListener("keydown", event => {
