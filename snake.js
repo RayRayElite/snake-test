@@ -88,7 +88,7 @@ function drawSnake() {
 }
 
 function moveSnake() {
-  // Move the snake in the current direction
+  // Move the snake in the current direction test
   let head = {
     x: snake[0].x,
     y: snake[0].y
@@ -102,48 +102,53 @@ function moveSnake() {
   } else if (direction === "right") {
     head.x++;
   }
-     // Check if the snake has collided with a wall or obstacle
-    if (snakeX < 0 || snakeX >= boardWidth || snakeY < 0 || snakeY >= boardHeight || hitObstacle()) {
-      // Game over
-      gameOver();
-      return;
-    }
-
-    // Check if the snake has collided with a fruit
-    if (snakeX === fruitX && snakeY === fruitY) {
-      // Increment the score and spawn a new fruit
-      score += 1;
-      updateScore();
-      spawnFruit();
-
-      // Increment the size counter and update the snake's body
-      sizeCounter += 1;
-      snakeBody.push({ x: snakeX, y: snakeY });
-
-      // Check if the snake has grown to the next size
-      if (sizeCounter >= sizeIncrement) {
-        snakeSize += 1;
-        sizeCounter = 0;
-      }
-    } else {
-      // Move the snake's body forward
-      var tail = snakeBody.shift();
-      tail.x = snakeX;
-      tail.y = snakeY;
-      snakeBody.push(tail);
-    }
-
-    // Clear the canvas and draw the game objects
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawFruit();
-    drawSnake();
-    drawObstacles();
-
-    // Schedule the next game tick
-    setTimeout(gameTick, gameSpeed);
+    // Check if the snake has collided with a wall or obstacle
+  if (head.x < 0 || head.x >= boardSize.width / TILE_SIZE || head.y < 0 || head.y >= boardSize.height / TILE_SIZE || hitObstacle(head.x, head.y)) {
+    // Game over
+    gameOver();
+    return;
   }
 
-  // Start the game
-  startGame();
+  // Check if the snake has collided with a fruit
+  for (let i = 0; i < fruits.length; i++) {
+    if (fruits[i].x === head.x && fruits[i].y === head.y) {
+      // Increment the score and remove the fruit
+      score += 1;
+      updateScore();
+      fruits.splice(i, 1);
 
-)();
+      // Increment the size counter and update the snake's body
+      snake.push({ x: head.x, y: head.y });
+      if (snake.length % FRUITS_PER_GROWTH === 1) {
+        snake.unshift({ x: head.x, y: head.y });
+      }
+
+      // Spawn a new fruit
+      spawnFruit();
+
+      // Check if the snake has collided with a fruit that grants an effect
+      if (fruits[i].effect) {
+        fruits[i].effect();
+      }
+
+      break;
+    }
+  }
+
+  // Move the snake's body
+  for (let i = snake.length - 1; i > 0; i--) {
+    snake[i].x = snake[i-1].x;
+    snake[i].y = snake[i-1].y;
+  }
+  snake[0].x = head.x;
+  snake[0].y = head.y;
+
+  // Clear the canvas and draw the game objects
+  ctx.clearRect(0, 0, boardSize.width, boardSize.height);
+  drawSnake();
+  drawFruits();
+  drawObstacles();
+
+  // Schedule the next game tick
+  setTimeout(gameTick, GAME_SPEED);
+}
