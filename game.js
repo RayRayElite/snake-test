@@ -87,7 +87,6 @@ function update() {
     }
   }
   player.y += player.velocityY;
-	}
 	
 	// Check for collisions with platforms
 	canJump = false; // Assume that the player can't jump until we know they are touching a platform
