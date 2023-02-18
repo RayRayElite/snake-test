@@ -136,3 +136,28 @@ function update() {
     player.jumpCount -= 10;
   }
 }
+// Draw the game
+function draw() {
+	// Clear the canvas
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	
+	// Draw the player
+	ctx.fillStyle = "red";
+	ctx.fillRect(player.x, player.y, player.width, player.height);
+	
+	// Draw the platforms
+	ctx.fillStyle = "gray";
+	for (const platform of platforms) {
+		ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+	}
+}
+
+// Game loop
+function loop() {
+	update();
+	draw();
+	requestAnimationFrame(loop);
+}
+
+// Start the game loop
+requestAnimationFrame(loop);
