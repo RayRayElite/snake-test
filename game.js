@@ -10,17 +10,17 @@ let deltaTime = 0;
 
 // Set up the player
 const player = {
-	x: 50,
-	y: 50,
-	width: 50,
-	height: 50,
-	speed: 5,
-	jumpHeight: 125,
-	jumping: false,
-	jumpCount: 0,
-	direction: "right",
-	velocityY: 0, // add velocityY to player object
-	velocityX: 0 // set initial velocity to 0
+  x: 0, // start at the left edge of the canvas
+  y: canvas.height - 50, // start at the bottom of the canvas
+  width: 50,
+  height: 50,
+  speed: 5,
+  jumpHeight: 125,
+  jumping: false,
+  jumpCount: 0,
+  direction: "none",
+  velocityY: 0,
+  velocityX: 0
 };
 
 // Set up the platforms 
