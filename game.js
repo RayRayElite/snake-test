@@ -16,7 +16,9 @@ const player = {
 	jumpHeight: 125,
 	jumping: false,
 	jumpCount: 0,
-	direction: "right"
+	direction: "right",
+	velocityY: 0 // add velocityY to player object
+	velocityX: 0, // set initial velocity to 0
 };
 
 // Set up the platforms 
@@ -87,46 +89,47 @@ function update() {
     }
   }
   player.y += player.velocityY;
-	
-	// Check for collisions with platforms
-	canJump = false; // Assume that the player can't jump until we know they are touching a platform
-	for (const platform of platforms) {
-		if (player.x + player.width > platform.x &&
-			player.x < platform.x + platform.width &&
-			player.y + player.height > platform.y &&
-			player.y < platform.y + platform.height) {
-			if (player.jumping) {
-				player.jumpCount = player.jumpHeight;
-			}
-			player.jumping = false;
-			player.y = platform.y - player.height;
-			canJump = true; // The player is touching a platform, so they can jump
-		}
-	}
-}
 
-// Draw the game
-function draw() {
-	// Clear the canvas
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	
-	// Draw the player
-	ctx.fillStyle = "red";
-	ctx.fillRect(player.x, player.y, player.width, player.height);
-	
-	// Draw the platforms
-	ctx.fillStyle = "gray";
-	for (const platform of platforms) {
-		ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-	}
-}
+  // Check for collisions with platforms
+  let canJump = false;
+  for (const platform of platforms) {
+    if (
+      player.x + player.width > platform.x &&
+      player.x < platform.x + platform.width &&
+      player.y + player.height > platform.y &&
+      player.y < platform.y + platform.height
+    ) {
+      if (player.jumping) {
+        player.jumpCount = player.jumpHeight;
+      }
+      player.jumping = false;
+      player.y = platform.y - player.height;
+      canJump = true;
+    }
+  }
 
-// Game loop
-function loop() {
-	update();
-	draw();
-	requestAnimationFrame(loop);
-}
+  // Apply input
+  if (player.direction === "left") {
+    player.x -= player.speed;
+  }
+  if (player.direction === "right") {
+    player.x += player.speed;
+  }
 
-// Start the game loop
-requestAnimationFrame(loop);
+  // Wrap player around screen
+  if (player.x < 0) {
+    player.x = canvas.width - player.width;
+  }
+  if (player.x > canvas.width - player.width) {
+    player.x = 0;
+  }
+
+  // Allow jumping
+  if (canJump && player.jumpCount === 0) {
+    player.jumpCount = player.jumpHeight;
+  }
+  if (player.jumpCount > 0) {
+    player.velocityY = -10;
+    player.jumpCount -= 10;
+  }
+}
