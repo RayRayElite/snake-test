@@ -91,7 +91,7 @@ function update() {
     if (jumpTime < jumpDuration) {
       // Calculate easing function
       const t = jumpTime / jumpDuration;
-      const jumpHeight = 25;
+      const jumpHeight = 125;
       const jumpSpeed = -1.25 * jumpHeight / jumpDuration;
       player.velocityY = jumpSpeed * t * (1 - t);
     } else {
