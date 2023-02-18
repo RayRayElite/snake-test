@@ -14,7 +14,7 @@ const player = {
   y: canvas.height - 50, // start at the bottom of the canvas
   width: 50,
   height: 50,
-  speed: 25,
+  speed: 125,
   jumpHeight: 125,
   jumping: false,
   jumpCount: 0,
@@ -91,7 +91,7 @@ function update() {
     if (jumpTime < jumpDuration) {
       // Calculate easing function
       const t = jumpTime / jumpDuration;
-      const jumpHeight = 125;
+      const jumpHeight = 25;
       const jumpSpeed = -1.25 * jumpHeight / jumpDuration;
       player.velocityY = jumpSpeed * t * (1 - t);
     } else {
