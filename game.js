@@ -9,7 +9,7 @@ const player = {
 	width: 50,
 	height: 50,
 	speed: 5,
-	jumpHeight: 10,
+	jumpHeight: 25,
 	jumping: false,
 	jumpCount: 0,
 	direction: "right"
