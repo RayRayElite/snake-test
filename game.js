@@ -9,10 +9,10 @@ const player = {
 	width: 50,
 	height: 50,
 	speed: 5,
-	jumpHeight: 25,
+	jumpHeight: 125,
 	jumping: false,
 	jumpCount: 0,
-	direction: "right"
+	direction: "none"
 };
 
 // Set up the platforms 
@@ -38,7 +38,7 @@ const platforms = [
 ];
 
 // Set up gravity
-const gravity = 1;
+const gravity = 2;
 
 // Handle user input
 document.addEventListener("keydown", event => {
