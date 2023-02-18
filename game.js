@@ -2,6 +2,10 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+//Sets up Global Variables for Jump Mechanics
+let jumpTime = 0;
+const jumpDuration = 0.5; // in seconds
+
 // Set up the player
 const player = {
 	x: 50,
@@ -65,32 +69,24 @@ document.addEventListener("keyup", event => {
 
 // Update the game state
 function update() {
-	// Apply gravity to the player
-	player.y += gravity;
-	
-	// Update the player's position
-	if (player.jumping && canJump) { // Only allow jumping if canJump is true
-		player.y -= player.jumpCount;
-		player.jumpCount -= 1;
-		if (player.jumpCount === 0) {
-			player.jumping = false;
-		}
-	}
-	if (player.direction === "left") {
-		player.x -= player.speed;
-	}
-	if (player.direction === "right") {
-		player.x += player.speed;
-	}
-	if (player.x < 0) {
-		player.x = 0;
-	}
-	if (player.x + player.width > canvas.width) {
-		player.x = canvas.width - player.width;
-	}
-	if (player.y + player.height > canvas.height) {
-		player.y = canvas.height - player.height;
-		player.jumping = false;
+  // Apply gravity
+  player.velocityY += gravity;
+
+  // Update player position
+  if (player.jumping) {
+    jumpTime += deltaTime;
+    if (jumpTime < jumpDuration) {
+      // Calculate easing function
+      const t = jumpTime / jumpDuration;
+      const jumpHeight = 200;
+      const jumpSpeed = -2 * jumpHeight / jumpDuration;
+      player.velocityY = jumpSpeed * t * (1 - t);
+    } else {
+      player.jumping = false;
+      jumpTime = 0;
+    }
+  }
+  player.y += player.velocityY;
 	}
 	
 	// Check for collisions with platforms
