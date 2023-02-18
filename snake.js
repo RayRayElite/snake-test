@@ -87,71 +87,102 @@ function drawSnake() {
   }
 }
 
-function moveSnake() {
-  // Move the snake in the current direction test
-  let head = {
-    x: snake[0].x,
-    y: snake[0].y
-  };
-  if (direction === "up") {
-    head.y--;
-  } else if (direction === "down") {
-    head.y++;
-  } else if (direction === "left") {
-    head.x--;
-  } else if (direction === "right") {
-    head.x++;
-  }
-  // Check if the snake has collided with a wall or obstacle
-  if (head.x < 0 || head.x >= boardSize.width / TILE_SIZE ||
-      head.y < 0 || head.y >= boardSize.height / TILE_SIZE ||
-      hitObstacle(head.x, head.y)) {
-    // Game over
-    gameOver();
-    return;
-  }
-
-  // Check if the snake has collided with a fruit
-  let foundFruit = false;
+function drawFruits() {
   for (let i = 0; i < fruits.length; i++) {
-    if (head.x === fruits[i].x && head.y === fruits[i].y) {
-      // Increment the score and spawn a new fruit
-      score += 1;
-      updateScore();
-      spawnFruit();
-
-      // Increment the size counter and update the snake's body
-      sizeCounter += 1;
-      snake.push({ x: head.x, y: head.y });
-
-      // Check if the snake has grown to the next size
-      if (sizeCounter >= FRUITS_PER_GROWTH) {
-        snakeSize += 1;
-        sizeCounter = 0;
-      }
-
-      foundFruit = true;
-      break;
-    }
+    drawTile(fruits[i].x, fruits[i].y, "red");
   }
-
-  if (!foundFruit) {
-    // Move the snake's body forward
-    let tail = snake.pop();
-    tail.x = head.x;
-    tail.y = head.y;
-    snake.unshift(tail);
-  }
-
-  // Clear the canvas and draw the game objects
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawFruits();
-  drawSnake();
-  drawObstacles();
-
-  // Schedule the next game tick
-  setTimeout(moveSnake, GAME_SPEED);
 }
 
-// Start the game
-startGame();
+function drawObstacles() {
+  for (let i = 0; i < obstacles.length; i++) {
+    drawTile(obstacles[i].x, obstacles[i].y, "gray");
+  }
+}
+
+function drawGame() {
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the canvas border
+ctx.beginPath();
+ctx.rect(0, 0, canvas.width, canvas.height);
+ctx.strokeStyle = "black";
+ctx.stroke();
+
+// Define the game initialization functions
+function startGame() {
+  // Initialize the snake
+  snake = [];
+  for (let i = INITIAL_SNAKE_LENGTH - 1; i >= 0; i--) {
+    snake.push({ x: i, y: 0 });
+  }
+
+  // Initialize the game objects
+  score = 0;
+  currency = 0;
+  fruits = [];
+  obstacles = [];
+  sizeCounter = 0;
+  snakeSize = INITIAL_SNAKE_LENGTH;
+
+  // Spawn the initial objects
+  spawnFruit();
+  spawnObstacles();
+
+  // Start the game loop
+  moveSnake();
+}
+
+function gameOver() {
+  // Display the game over message and final score
+  alert("Game over! Final score: " + score);
+
+  // Reset the game state
+  startGame();
+}
+
+function updateScore() {
+  document.getElementById("score").innerHTML = "Score: " + score;
+}
+
+function updateCurrency() {
+  document.getElementById("currency").innerHTML = "Currency: " + currency;
+}
+
+function spawnFruit() {
+  let x = Math.floor(Math.random() * boardSize.width / TILE_SIZE);
+  let y = Math.floor(Math.random() * boardSize.height / TILE_SIZE);
+  fruits.push({ x: x, y: y });
+  setTimeout(spawnFruit, fruitSpawnInterval);
+}
+
+function drawFruits() {
+  for (let i = 0; i < fruits.length; i++) {
+    drawTile(fruits[i].x, fruits[i].y, "red");
+  }
+}
+
+function spawnObstacles() {
+  while (obstacles.length < maxObstacles) {
+    let x = Math.floor(Math.random() * boardSize.width / TILE_SIZE);
+    let y = Math.floor(Math.random() * boardSize.height / TILE_SIZE);
+    let lifespan = Math.floor(Math.random() * OBSTACLE_LIFESPAN);
+    obstacles.push({ x: x, y: y, lifespan: lifespan });
+  }
+  setTimeout(spawnObstacles, OBSTACLE_LIFESPAN);
+}
+
+function drawObstacles() {
+  for (let i = 0; i < obstacles.length; i++) {
+    drawTile(obstacles[i].x, obstacles[i].y, "gray");
+  }
+}
+
+function hitObstacle(x, y) {
+  for (let i = 0; i < obstacles.length; i++) {
+    if (obstacles[i].x === x && obstacles[i].y === y) {
+      return true;
+    }
+  }
+  return false;
+}
