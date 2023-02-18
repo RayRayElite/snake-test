@@ -1,0 +1,44 @@
+#container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+button {
+  background-color: #4287f5;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 10px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 1px 1px 3px #aaaaaa;
+}
+
+button:hover {
+  background-color: #5aa5ff;
+}
+
+button:active {
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+#prestigeButton:disabled {
+  background-color: #aaaaaa;
+  cursor: not-allowed;
+}
+
+#buyIdleButton:disabled {
+  background-color: #aaaaaa;
+  cursor: not-allowed;
+}

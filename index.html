@@ -1,15 +1,66 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Incremental Game</title>
-  </head>
-  <body>
-    <h1>Incremental Game</h1>
-    <p>Current Score: <span id="score">0</span></p>
-    <p>Upgrade Level: <span id="level">1</span></p>
-    <button id="clickButton">Click Me!</button>
-    <button id="buyUpgradeButton">Buy Upgrade</button>
-    <button id="prestigeButton">Prestige</button>
-    <script src="game.js"></script>
-  </body>
+<head>
+  <title>Idle Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #click-button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    #upgrade-button {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+    }
+
+    #prestige-button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>Idle Game</h1>
+    <p>Level: <span id="level">1</span></p>
+    <p>Score: <span id="score">0</span></p>
+    <p>Upgrades Purchased: <span id="upgrades">0</span></p>
+    <p>Prestige Level: <span id="prestige-level">0</span></p>
+    <button id="click-button" class="button">Click Me!</button>
+    <button id="upgrade-button" class="button">Upgrade (Cost: 10)</button>
+    <button id="prestige-button" class="button">Prestige (Cost: 100)</button>
+    <p>Idle Rate: <span id="idle-rate">0</span> per second</p>
+    <button id="buy-idle" class="button">Buy Idle (Cost: 10)</button>
+  </div>
+
+  <script src="game.js"></script>
+</body>
 </html>
