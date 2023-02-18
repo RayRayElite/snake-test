@@ -74,6 +74,9 @@ function update() {
   // Apply gravity
   player.velocityY += gravity;
 
+  // sets horizontal player movement to 0 every update when not being changed by the user.
+  player.velocityX = 0;
+
   // Update player position
   if (player.jumping) {
     jumpTime += deltaTime;
