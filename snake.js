@@ -1,3 +1,5 @@
+console.log()
+
 // Define the game constants
 const TILE_SIZE = 20;
 const GAME_WIDTH = 30;
