@@ -104,100 +104,273 @@ function drawGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Draw the canvas border
-ctx.beginPath();
-ctx.rect(0, 0, canvas.width, canvas.height);
-ctx.strokeStyle = "black";
-ctx.stroke();
+  ctx.beginPath();
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "black";
+  ctx.stroke();
 
-// Define the game initialization functions
-function startGame() {
-  // Initialize the snake
-  snake = [];
-  for (let i = INITIAL_SNAKE_LENGTH - 1; i >= 0; i--) {
-    snake.push({ x: i, y: 0 });
-  }
-
-  // Initialize the game objects
-  score = 0;
-  currency = 0;
-  fruits = [];
-  obstacles = [];
-  sizeCounter = 0;
-  snakeSize = INITIAL_SNAKE_LENGTH;
-
-  // Spawn the initial objects
-  spawnFruit();
-  spawnObstacles();
-
-  // Start the game loop
-  moveSnake();
-}
-
-function gameOver() {
-  // Display the game over message and final score
-  alert("Game over! Final score: " + score);
-
-  // Reset the game state
-  startGame();
-}
-
-function updateScore() {
-  document.getElementById("score").innerHTML = "Score: " + score;
-}
-
-function updateCurrency() {
-  document.getElementById("currency").innerHTML = "Currency: " + currency;
-}
-
-function spawnFruit() {
-  let x = Math.floor(Math.random() * boardSize.width / TILE_SIZE);
-  let y = Math.floor(Math.random() * boardSize.height / TILE_SIZE);
-  fruits.push({ x: x, y: y });
-  setTimeout(spawnFruit, fruitSpawnInterval);
-}
-
-function drawFruits() {
-  for (let i = 0; i < fruits.length; i++) {
-    drawTile(fruits[i].x, fruits[i].y, "red");
-  }
-}
-
-function spawnObstacles() {
-  while (obstacles.length < maxObstacles) {
-    let x = Math.floor(Math.random() * boardSize.width / TILE_SIZE);
-    let y = Math.floor(Math.random() * boardSize.height / TILE_SIZE);
-    let lifespan = Math.floor(Math.random() * OBSTACLE_LIFESPAN);
-    obstacles.push({ x: x, y: y, lifespan: lifespan });
-  }
-  setTimeout(spawnObstacles, OBSTACLE_LIFESPAN);
-}
-
-function drawObstacles() {
-  for (let i = 0; i < obstacles.length; i++) {
-    drawTile(obstacles[i].x, obstacles[i].y, "gray");
-  }
-}
-
-function hitObstacle(x, y) {
-  for (let i = 0; i < obstacles.length; i++) {
-    if (obstacles[i].x === x && obstacles[i].y === y) {
-      return true;
-    }
-  }
-  return false;
-}
- // Draw the game objects
+  // Draw the snake, fruits, and obstacles
   drawSnake();
   drawFruits();
   drawObstacles();
 
-  // Check for collisions
-  checkCollisions();
+  // Draw the score and currency
+  ctx.fillStyle = "black";
+  ctx.font = "20px Arial";
+  ctx.fillText(`Score: ${score}`, 10, 25);
+  ctx.fillText(`Currency: ${currency}`, 10, 50);
+}
 
-  // Update the score and currency
-  updateScore();
-  updateCurrency();
+function update() {
+  // Move the snake
+  let newHead = { x: snake[0].x, y: snake[0].y };
+  if (direction === "up") {
+    newHead.y--;
+  } else if (direction === "down") {
+    newHead.y++;
+  } else if (direction === "left") {
+    newHead.x--;
+  } else if (direction === "right") {
+    newHead.x++;
+  }
 
-  // Call the next frame of the game
-  setTimeout(drawGame, GAME_SPEED);
+  // Check for collision with walls
+  if (newHead.x < 0 || newHead.x >= maxBoardSize || newHead.y < 0 || newHead.y >= maxBoardSize) {
+    endGame();
+    return;
+  }
+
+  // Check for collision with obstacles
+  for (let i = 0; i < obstacles.length; i++) {
+    if (obstacles[i].x === newHead.x && obstacles[i].y === newHead.y) {
+      endGame();
+      return;
+    }
+  }
+
+  // Check for collision with fruits
+  for (let i = 0; i < fruits.length; i++) {
+    if (fruits[i].x === newHead.x && fruits[i].y === newHead.y) {
+      // Remove the fruit from the array
+      fruits.splice(i, 1);
+
+      // Add to the score and currency
+      score++;
+      currency++;
+
+      // Check if the snake should grow
+      if (score % FRUITS_PER_GROWTH === 0) {
+        snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
+      }
+
+      // Spawn a new fruit
+      spawnFruit();
+
+      // Update the game display
+      drawGame();
+      return;
+    }
+  }
+
+  // Move the snake by adding the new head to the beginning and removing the tail
+  snake.unshift(newHead);
+  snake.pop();
+
+  // Update the game display
+  drawGame();
+}
+
+function endGame() {
+  // Reset the game variables
+  snake = [];
+  fruits = [];
+  obstacles = [];
+  direction = "right";
+  score = 0;
+  currency = 0;
+
+  // Spawn the initial snake and fruit
+  spawnSnake();
+  spawnFruit();
+
+  // Update the game display
+  drawGame();
+}
+
+function spawnSnake() {
+  // Spawn the snake in the center of the board
+  let centerX = Math.floor(maxBoardSize / 2);
+  let centerY = Math.floor(maxBoardSize / 2);
+
+  for (let i = 0; i < INITIAL_SNAKE_LENGTH; i++) {
+    snake.push({ x: centerX - i, y: centerY });
+  }
+}
+
+function spawnFruit() {
+  // Generate a random position for the fruit
+  let fruitX = Math.floor(Math.random() * maxBoardSize);
+  let fruitY = Math.floor(Math.random() * maxBoardSize);
+
+// Check that the fruit doesn't overlap with the snake or obstacles
+for (let i = 0; i < snake.length; i++) {
+if (fruitX === snake[i].x && fruitY === snake[i].y) {
+// The fruit is on the snake, regenerate the fruit
+spawnFruit();
+return;
+}
+}
+for (let i = 0; i < obstacles.length; i++) {
+if (fruitX === obstacles[i].x && fruitY === obstacles[i].y) {
+// The fruit is on an obstacle, regenerate the fruit
+spawnFruit();
+return;
+}
+}
+
+// Add the new fruit to the array
+fruits.push({ x: fruitX, y: fruitY });
+}
+
+function spawnObstacle() {
+// Generate a random position for the obstacle
+let obstacleX = Math.floor(Math.random() * maxBoardSize);
+let obstacleY = Math.floor(Math.random() * maxBoardSize);
+
+// Check that the obstacle doesn't overlap with the snake, fruits or other obstacles
+for (let i = 0; i < snake.length; i++) {
+if (obstacleX === snake[i].x && obstacleY === snake[i].y) {
+// The obstacle is on the snake, regenerate the obstacle
+spawnObstacle();
+return;
+}
+}
+for (let i = 0; i < fruits.length; i++) {
+if (obstacleX === fruits[i].x && obstacleY === fruits[i].y) {
+// The obstacle is on a fruit, regenerate the obstacle
+spawnObstacle();
+return;
+}
+}
+for (let i = 0; i < obstacles.length; i++) {
+if (obstacleX === obstacles[i].x && obstacleY === obstacles[i].y) {
+// The obstacle is on another obstacle, regenerate the obstacle
+spawnObstacle();
+return;
+}
+}
+
+// Add the new obstacle to the array
+obstacles.push({ x: obstacleX, y: obstacleY });
+}
+
+function handleKeyPress(event) {
+// Change the direction of the snake based on the key pressed
+if (event.keyCode === 38 && direction !== "down") {
+direction = "up";
+} else if (event.keyCode === 40 && direction !== "up") {
+direction = "down";
+} else if (event.keyCode === 37 && direction !== "right") {
+direction = "left";
+} else if (event.keyCode === 39 && direction !== "left") {
+direction = "right";
+}
+}
+
+// Start the game
+spawnSnake();
+spawnFruit();
+spawnObstacle();
+drawGame();
+
+// Listen for arrow key presses to change the direction of the snake
+document.addEventListener("keydown", handleKeyPress);
+
+function update() {
+  // Move the snake
+  let newHead;
+  switch (direction) {
+    case "left":
+      newHead = { x: snake[0].x - 1, y: snake[0].y };
+      break;
+    case "up":
+      newHead = { x: snake[0].x, y: snake[0].y - 1 };
+      break;
+    case "right":
+      newHead = { x: snake[0].x + 1, y: snake[0].y };
+      break;
+    case "down":
+      newHead = { x: snake[0].x, y: snake[0].y + 1 };
+      break;
+  }
+
+  // Check if the snake hit a wall or obstacle
+  if (newHead.x < 0 || newHead.x >= maxBoardSize || newHead.y < 0 || newHead.y >= maxBoardSize || isOccupied(newHead.x, newHead.y)) {
+    endGame();
+    return;
+  }
+
+  // Check if the snake ate a fruit
+  let ateFruit = false;
+  for (let i = 0; i < fruits.length; i++) {
+    if (fruits[i].x === newHead.x && fruits[i].y === newHead.y) {
+      snake.unshift(newHead);
+      fruits.splice(i, 1);
+      ateFruit = true;
+      break;
+    }
+  }
+
+  // Move the rest of the snake
+  if (!ateFruit) {
+    let tail = snake.pop();
+    tail.x = newHead.x;
+    tail.y = newHead.y;
+    snake.unshift(tail);
+  }
+
+  // Add a new obstacle if it's time
+  if (obstacles.length < maxObstacles && Math.random() < OBSTACLE_SPAWN_CHANCE) {
+    addObstacle();
+  }
+
+  // Update the game display
+  drawGame();
+}
+
+function endGame() {
+  // Reset the game state
+  snake = [{ x: 10, y: 10 }];
+  fruits = [];
+  obstacles = [];
+
+  // Spawn the initial snake and fruit
+  spawnSnake();
+  spawnFruit();
+
+  // Update the game display
+  drawGame();
+}
+
+function drawGame() {
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the snake
+  for (let i = 0; i < snake.length; i++) {
+    ctx.fillStyle = i === 0 ? "black" : "green";
+    ctx.fillRect(snake[i].x * BLOCK_SIZE, snake[i].y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  }
+
+  // Draw the fruits
+  for (let i = 0; i < fruits.length; i++) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(fruits[i].x * BLOCK_SIZE, fruits[i].y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  }
+
+  // Draw the obstacles
+  for (let i = 0; i < obstacles.length; i++) {
+    ctx.fillStyle = "gray";
+    ctx.fillRect(obstacles[i].x * BLOCK_SIZE, obstacles[i].y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  }
 }
