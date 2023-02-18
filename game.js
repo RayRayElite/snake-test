@@ -15,7 +15,7 @@ const player = {
 	direction: "right"
 };
 
-// Set up the platforms
+// Set up the platforms 
 const platforms = [
 	{
 		x: 0,
@@ -38,7 +38,7 @@ const platforms = [
 ];
 
 // Set up gravity
-const gravity = 0.5;
+const gravity = 2;
 
 // Handle user input
 document.addEventListener("keydown", event => {
@@ -69,7 +69,7 @@ function update() {
 	player.y += gravity;
 	
 	// Update the player's position
-	if (player.jumping) {
+	if (player.jumping && canJump) { // Only allow jumping if canJump is true
 		player.y -= player.jumpCount;
 		player.jumpCount -= 1;
 		if (player.jumpCount === 0) {
@@ -94,6 +94,7 @@ function update() {
 	}
 	
 	// Check for collisions with platforms
+	canJump = false; // Assume that the player can't jump until we know they are touching a platform
 	for (const platform of platforms) {
 		if (player.x + player.width > platform.x &&
 			player.x < platform.x + platform.width &&
@@ -104,6 +105,7 @@ function update() {
 			}
 			player.jumping = false;
 			player.y = platform.y - player.height;
+			canJump = true; // The player is touching a platform, so they can jump
 		}
 	}
 }
