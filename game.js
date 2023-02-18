@@ -1,107 +1,42 @@
-// Initialize the canvas
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
 
-//Sets up Global Variables for Jump Mechanics
-let jumpTime = 0;
-const jumpDuration = 0.3; // in seconds
-let lastTime = 0;
-let deltaTime = 0;
-
-// Set up the player
 const player = {
-  x: 0, // start at the left edge of the canvas
-  y: canvas.height - 50, // start at the bottom of the canvas
-  width: 50,
-  height: 50,
-  speed: 125,
-  jumpHeight: 125,
-  jumping: false,
-  jumpCount: 0,
-  direction: "none",
-  velocityY: 0,
-  velocityX: 0
+  x: 50,
+  y: 100,
+  width: 20,
+  height: 40,
+  xSpeed: 5
 };
 
-// Set up the platforms 
 const platforms = [
-	{
-		x: 0,
-		y: canvas.height - 50,
-		width: canvas.width,
-		height: 50
-	},
-	{
-		x: 200,
-		y: 400,
-		width: 100,
-		height: 25
-	},
-	{
-		x: 500,
-		y: 350,
-		width: 100,
-		height: 25
-	}
+  { x: 0, y: 200, width: 150, height: 10 },
+  { x: 200, y: 150, width: 100, height: 10 },
+  { x: 350, y: 250, width: 150, height: 10 },
+  { x: 550, y: 200, width: 100, height: 10 }
 ];
 
-// Set up gravity
-const gravity = 2;
+let gameWidth = 700;
+let gameHeight = 300;
 
-// Handle user input
-document.addEventListener("keydown", event => {
-	if (event.code === "KeyW" && !player.jumping) {
-		player.jumping = true;
-		player.jumpCount = player.jumpHeight;
-	}
-	if (event.code === "KeyA") {
-		player.direction = "left";
-	}
-	if (event.code === "KeyD") {
-		player.direction = "right";
-	}
-});
-
-document.addEventListener("keyup", event => {
-	if (event.code === "KeyA" && player.direction === "left") {
-		player.direction = "none";
-	}
-	if (event.code === "KeyD" && player.direction === "right") {
-		player.direction = "none";
-	}
-});
-
-// Update the game state
 function update() {
-  // Apply gravity
-  player.velocityY += gravity;
-
-  // set the player's vertical velocity to 0 and snap them to the bottom of the canvas if they fall off the bottom.
-  if (player.y + player.height > canvas.height) {
-    player.velocityY = 0;
-    player.y = canvas.height - player.height;
+  // Move the player horizontally
+  player.x += player.xSpeed;
+  
+  // Check if the player has reached the left or right boundary
+  if (player.x < gameWidth / 3) {
+    gameWidth += player.xSpeed;
+    canvas.style.width = gameWidth + 'px';
+  } else if (player.x > gameWidth * 2 / 3) {
+    gameWidth += player.xSpeed;
+    canvas.style.width = gameWidth + 'px';
+    canvas.style.marginLeft = -(gameWidth - 700) + 'px';
   }
-
-  // sets horizontal player movement to 0 every update when not being changed by the user.
-  player.velocityX = 0;
-
-  // Update player position
-  if (player.jumping) {
-    jumpTime += deltaTime;
-    if (jumpTime < jumpDuration) {
-      // Calculate easing function
-      const t = jumpTime / jumpDuration;
-      const jumpHeight = 25;
-      const jumpSpeed = -1.25 * jumpHeight / jumpDuration;
-      player.velocityY = jumpSpeed * t * (1 - t);
-    } else {
-      player.jumping = false;
-      jumpTime = 0;
-    }
-  } else if (player.velocityY !== 0) {
-    player.y += player.velocityY * deltaTime;
-  }
-
+  
+  // Draw the player
+  ctx.fillStyle = 'blue';
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+  
   // Check for collisions with platforms
   let canJump = false;
   for (const platform of platforms) {
@@ -111,69 +46,19 @@ function update() {
       player.y + player.height > platform.y &&
       player.y < platform.y + platform.height
     ) {
-      if (player.jumping) {
-        player.jumpCount = player.jumpHeight;
-      }
-      player.jumping = false;
-      player.y = platform.y - player.height;
+      // The player is colliding with this platform
       canJump = true;
+      player.y = platform.y - player.height;
+      break;
     }
   }
-
-  // Apply input
-  if (player.direction === "left") {
-    player.velocityX = -player.speed;
-  }
-  if (player.direction === "right") {
-    player.velocityX = player.speed;
-  }
-  player.x += player.velocityX * deltaTime;
-
-  // Wrap player around screen
-  if (player.x < 0) {
-    player.x = canvas.width - player.width;
-  }
-  if (player.x > canvas.width - player.width) {
-    player.x = 0;
-  }
-
-  // Allow jumping
-  if (canJump && player.jumpCount === 0) {
-    player.jumpCount = player.jumpHeight;
-  }
-  if (player.jumpCount > 0) {
-    player.velocityY = -10;
-    player.jumpCount -= 10;
-  }
-}
-
-// Draw the game
-function draw() {
-	// Clear the canvas
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	
-	// Draw the player
-	ctx.fillStyle = "red";
-if (player) {
-	ctx.fillRect(player.x, player.y, player.width, player.height);
-}
-	
-	// Draw the platforms
-	ctx.fillStyle = "gray";
-	for (const platform of platforms) {
-		ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-	}
-}
-
-// Game loop
-function loop(timestamp) {
-  deltaTime = (timestamp - lastTime) / 1000; // Convert to seconds
-  lastTime = timestamp;
   
-  update();
-  draw();
-  requestAnimationFrame(loop);
+  // If the player can't jump, make them fall
+  if (!canJump) {
+    player.y += 5;
+  }
 }
 
-// Start the game loop
-requestAnimationFrame(loop);
+setInterval(() => {
+  update();
+}, 1000 / 60);
