@@ -1,83 +1,103 @@
-// Initialize game variables
-let score = 0;
-let level = 1;
-let upgradeCost = 10;
-let prestigeLevel = 0;
+// Initialize the canvas
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-// Get DOM elements
-const scoreElem = document.getElementById('score');
-const levelElem = document.getElementById('level');
-const clickButton = document.getElementById('clickButton');
-const buyUpgradeButton = document.getElementById('buyUpgradeButton');
-const prestigeButton = document.getElementById('prestigeButton');
+// Set up the player
+const player = {
+	x: 50,
+	y: 50,
+	width: 50,
+	height: 50,
+	speed: 5,
+	jumpHeight: 10,
+	jumping: false,
+	jumpCount: 0
+};
 
-// Function to update game state
-function updateGameState() {
-  // Update score
-  score += level;
-  scoreElem.innerText = score;
+// Set up the platforms
+const platforms = [
+	{
+		x: 0,
+		y: canvas.height - 50,
+		width: canvas.width,
+		height: 50
+	},
+	{
+		x: 200,
+		y: 400,
+		width: 100,
+		height: 25
+	},
+	{
+		x: 500,
+		y: 350,
+		width: 100,
+		height: 25
+	}
+];
 
-  // Update upgrade level and cost
-  if (score >= upgradeCost) {
-    level++;
-    score -= upgradeCost;
-    upgradeCost = Math.floor(upgradeCost * 1.5);
-    levelElem.innerText = level;
-    scoreElem.innerText = score;
-    buyUpgradeButton.innerText = `Buy Upgrade (${upgradeCost} points)`;
-  }
+// Handle user input
+document.addEventListener("keydown", event => {
+	if (event.code === "KeyW" && !player.jumping) {
+		player.jumping = true;
+		player.jumpCount = player.jumpHeight;
+	}
+});
 
-  // Update prestige level
-  if (score >= 100 && prestigeLevel === 0) {
-    prestigeLevel = 1;
-    level = 1;
-    upgradeCost = 10;
-    score = 0;
-    levelElem.innerText = level;
-    scoreElem.innerText = score;
-    buyUpgradeButton.innerText = `Buy Upgrade (${upgradeCost} points)`;
-    prestigeButton.innerText = `Prestige (Cost: 500 points)`;
-  } else if (score >= 500 && prestigeLevel === 1) {
-    prestigeLevel = 2;
-    level = 1;
-    upgradeCost = 10;
-    score = 0;
-    levelElem.innerText = level;
-    scoreElem.innerText = score;
-    buyUpgradeButton.innerText = `Buy Upgrade (${upgradeCost} points)`;
-    prestigeButton.innerText = `Prestige (Maxed Out)`;
-  }
+// Update the game state
+function update() {
+	// Update the player's position
+	if (player.jumping) {
+		player.y -= player.jumpCount;
+		player.jumpCount -= 1;
+		if (player.jumpCount === 0) {
+			player.jumping = false;
+		}
+	}
+	if (player.x < 0) {
+		player.x = 0;
+	}
+	if (player.x + player.width > canvas.width) {
+		player.x = canvas.width - player.width;
+	}
+	if (player.y + player.height > canvas.height) {
+		player.y = canvas.height - player.height;
+		player.jumping = false;
+	}
+	
+	// Check for collisions with platforms
+	for (const platform of platforms) {
+		if (player.x + player.width > platform.x &&
+			player.x < platform.x + platform.width &&
+			player.y + player.height > platform.y &&
+			player.y < platform.y + platform.height) {
+			if (player.jumping) {
+				player.jumpCount = player.jumpHeight;
+			}
+			player.jumping = false;
+			player.y = platform.y - player.height;
+		}
+	}
 }
 
-// Event listeners
-clickButton.addEventListener('click', () => {
-  updateGameState();
-});
+// Draw the game
+function draw() {
+	// Clear the canvas
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	
+	// Draw the player
+	ctx.fillRect(player.x, player.y, player.width, player.height);
+	
+	// Draw the platforms
+	for (const platform of platforms) {
+		ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+	}
+}
 
-buyUpgradeButton.addEventListener('click', () => {
-  if (score >= upgradeCost) {
-    updateGameState();
-  }
-});
-
-prestigeButton.addEventListener('click', () => {
-  if (prestigeLevel === 1 && score >= 100) {
-    prestigeLevel = 2;
-    score -= 100;
-    level = 1;
-    upgradeCost = 10;
-    levelElem.innerText = level;
-    scoreElem.innerText = score;
-    buyUpgradeButton.innerText = `Buy Upgrade (${upgradeCost} points)`;
-    prestigeButton.innerText = `Prestige (Maxed Out)`;
-  } else if (prestigeLevel === 2 && score >= 500) {
-    score = 0;
-    level = 1;
-    upgradeCost = 10;
-    prestigeLevel = 1;
-    levelElem.innerText = level;
-    scoreElem.innerText = score;
-    buyUpgradeButton.innerText = `Buy Upgrade (${upgradeCost} points)`;
-    prestigeButton.innerText = `Prestige (Cost: 100 points)`;
-  }
-});
+// Run the game loop
+function gameLoop() {
+	update();
+	draw();
+	requestAnimationFrame(gameLoop);
+}
+gameLoop();
