@@ -88,7 +88,7 @@ function drawSnake() {
 }
 
 function moveSnake() {
-  // Move the snake in the current direction test
+  // Move the snake in the current direction
   let head = {
     x: snake[0].x,
     y: snake[0].y
