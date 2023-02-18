@@ -1,5 +1,5 @@
 // Set up the canvas and get the drawing context
-var canvas = document.getElementById("snake-canvas");
+var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
 
 // Set up the game variables
