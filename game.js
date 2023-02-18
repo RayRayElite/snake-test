@@ -154,9 +154,18 @@ function draw() {
 
 // Game loop
 function loop() {
-	update();
-	draw();
-	requestAnimationFrame(loop);
+	let lastTime = 0;
+let deltaTime = 0;
+
+function loop(timestamp) {
+  deltaTime = (timestamp - lastTime) / 1000; // Convert to seconds
+  lastTime = timestamp;
+  
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
 }
 
 // Start the game loop
