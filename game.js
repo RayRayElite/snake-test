@@ -16,7 +16,7 @@ const player = {
 	jumpHeight: 125,
 	jumping: false,
 	jumpCount: 0,
-	direction: "none"
+	direction: "notMoving"
 };
 
 // Set up the platforms 
