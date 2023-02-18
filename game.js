@@ -14,7 +14,7 @@ const player = {
   y: canvas.height - 50, // start at the bottom of the canvas
   width: 50,
   height: 50,
-  speed: 5,
+  speed: 25,
   jumpHeight: 125,
   jumping: false,
   jumpCount: 0,
