@@ -76,6 +76,12 @@ function update() {
   // Apply gravity
   player.velocityY += gravity;
 
+// set the player's vertical velocity to 0 and snap them to the bottom of the canvas if they fall off the bottom.
+if (player.y + player.height > canvas.height) {
+  player.velocityY = 0;
+  player.y = canvas.height - player.height;
+}
+
   // sets horizontal player movement to 0 every update when not being changed by the user.
   player.velocityX = 0;
 
